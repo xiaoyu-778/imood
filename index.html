@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="iMood - 沉浸式AI语音交互日记，你的情感陪伴与成长伙伴">
+  <title>iMood — AI Voice Diary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Background particles -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  <!-- Main App Container -->
+  <div id="app" class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-section">
+        <h1 class="logo-text">iMood</h1>
+      </div>
+      <div class="header-actions">
+        <!-- Reset particle button (hidden by default) -->
+        <button id="resetParticleBtn" class="header-btn" style="display: none;" title="重置为心形">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
+        <button id="musicBtn" class="header-btn" title="音乐播放器">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+          </svg>
+        </button>
+        <button id="themeToggle" class="header-btn" title="切换主题">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button id="diaryBtn" class="header-btn" title="日记本">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <line x1="8" y1="6" x2="16" y2="6"/>
+            <line x1="8" y1="10" x2="14" y2="10"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Music Control Panel -->
+    <div class="music-panel" id="musicPanel">
+      <div class="music-panel-content">
+        <div class="music-panel-header">
+          <h3>音乐播放器</h3>
+          <button class="music-panel-close" id="musicPanelClose">&times;</button>
+        </div>
+        
+        <div class="music-controls">
+          <div class="music-control-buttons">
+            <button class="music-control-btn" id="musicPrevBtn" title="上一首">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+              </svg>
+            </button>
+            <button class="music-control-btn music-play-btn" id="musicPlayBtn" title="播放/暂停">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+            <button class="music-control-btn" id="musicNextBtn" title="下一首">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="music-volume-control">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="music-volume-icon">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+            <input type="range" id="musicVolume" class="music-volume-slider" min="0" max="1" step="0.01" value="0.7">
+          </div>
+        </div>
+        
+        <div class="music-info">
+          <div class="music-current-song">
+            <span id="musicCurrentTitle">未播放</span>
+            <span id="musicCurrentArtist"></span>
+          </div>
+          <div class="music-progress">
+            <input type="range" id="musicProgress" class="music-progress-slider" min="0" max="100" value="0">
+            <div class="music-time">
+              <span id="musicCurrentTime">0:00</span>
+              <span id="musicDuration">0:00</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="music-playlist-section">
+          <h4>播放列表</h4>
+          <div class="music-playlist" id="musicPlaylist">
+            <p class="music-empty-hint">暂无音乐</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona Selector - Samantha Only with Status Dot -->
+    <div class="persona-bar">
+      <button class="persona-chip active" data-persona="samantha">
+        <span class="persona-status-dot" id="statusDot"></span>
+        <span class="persona-name">Samantha</span>
+      </button>
+      <!-- AI Voice Waveform Capsule -->
+      <div class="voice-waveform-capsule" id="voiceWaveformCapsule">
+        <canvas id="voiceWaveformCanvas" class="voice-waveform-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Main Stage: AI Visualization -->
+    <main class="main-stage">
+
+      <!-- Nebula AI Avatar -->
+      <div class="nebula-container" id="nebulaContainer">
+        <canvas id="nebulaCanvas" class="nebula-canvas"></canvas>
+        <div class="nebula-glow"></div>
+      </div>
+
+      <!-- AI Response Bubble -->
+      <div class="ai-bubble" id="aiBubble">
+        <div class="ai-bubble-content collapsed" id="aiBubbleContent">
+          <div class="ai-bubble-en" id="aiBubbleEn"></div>
+          <div class="ai-bubble-cn" id="aiBubbleCn"></div>
+        </div>
+        <button class="ai-bubble-expand-btn" id="aiBubbleExpandBtn" title="展开/收起">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+          </svg>
+        </button>
+      </div>
+    </main>
+
+    <!-- Bottom: Voice Waveform & Subtitles & Input -->
+    <footer class="interaction-area">
+      <!-- Voice Waveform Visualization -->
+      <div class="waveform-container" id="waveformContainer">
+        <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+      </div>
+
+      <!-- Subtitles with Liquid Glass Effect -->
+      <div class="subtitle-glass" id="subtitleGlass">
+        <!-- Pause Button -->
+        <button class="pause-btn" id="pauseBtn" style="display: none;" title="暂停">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </button>
+        
+        <!-- Subtitles -->
+        <div class="subtitles-container" id="subtitlesContainer">
+          <div class="subtitle-text" id="subtitleText"></div>
+          <div class="subtitle-translation" id="subtitleTranslation"></div>
+        </div>
+        
+        <!-- Expand Button -->
+        <button class="expand-btn" id="expandBtn" style="display: none;" title="展开">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Input Area - Text Only -->
+      <div class="input-area">
+        <div class="input-wrapper">
+          <input type="text" id="textInput" placeholder="和 Samantha 说说话..." autocomplete="off">
+          <button class="input-btn" id="sendBtn" title="发送">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <label class="image-btn" id="imageUploadLabel" title="分享图片">
+          <input type="file" id="imageInput" accept="image/*" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </label>
+        <button class="diary-end-btn" id="endConversationBtn" title="开始对话后可保存日记">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Diary: End Dialog Overlay -->
+    <div class="diary-overlay" id="diaryEndOverlay">
+      <div class="diary-overlay-content">
+        <div class="diary-overlay-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3 class="diary-overlay-title">保存这次对话？</h3>
+        <p class="diary-overlay-desc">将对话保存为情绪日记卡</p>
+        <div class="diary-notebook-select">
+          <label>选择日记本</label>
+          <select id="diaryNotebookSelect">
+            <option value="default">tree hole</option>
+          </select>
+        </div>
+        <div class="diary-overlay-actions">
+          <button class="diary-btn diary-btn-secondary" id="diaryDiscardBtn">放弃</button>
+          <button class="diary-btn diary-btn-primary" id="diarySaveBtn">保存日记</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diary: Notebook Dropdown Panel -->
+    <div class="diary-dropdown" id="diaryDropdown">
+      <div class="diary-dropdown-header">
+        <h3>我的日记本</h3>
+        <button class="diary-add-btn" id="diaryAddNotebookBtn" title="新建日记本">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="diary-notebook-list" id="diaryNotebookList">
+        <div class="diary-notebook-item" data-id="default">
+          <div class="diary-notebook-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <div class="diary-notebook-info">
+            <span class="diary-notebook-name">tree hole</span>
+            <span class="diary-notebook-count">0 篇日记</span>
+          </div>
+          <span class="diary-notebook-badge">默认</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diary: Notebook Detail Panel -->
+    <aside class="diary-detail-panel" id="diaryDetailPanel">
+      <div class="diary-detail-header">
+        <button class="diary-back-btn" id="diaryBackBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <h2 id="diaryDetailTitle">日记本</h2>
+        <div class="diary-detail-actions">
+          <button class="diary-edit-btn" id="diaryEditNotebookBtn" title="编辑">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button class="diary-delete-btn" id="diaryDeleteNotebookBtn" title="删除">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="diary-detail-content" id="diaryDetailContent">
+        <div class="diary-list" id="diaryList">
+          <p class="empty-hint">暂无日记</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Diary: Create/Edit Notebook Modal -->
+    <div class="diary-modal" id="diaryNotebookModal">
+      <div class="diary-modal-content">
+        <div class="diary-modal-header">
+          <h3 id="diaryModalTitle">新建日记本</h3>
+          <button class="diary-modal-close" id="diaryModalClose">&times;</button>
+        </div>
+        <div class="diary-modal-body">
+          <div class="diary-form-group">
+            <label>日记本名称</label>
+            <input type="text" id="diaryNotebookNameInput" placeholder="输入日记本名称..." maxlength="20">
+          </div>
+          <div class="diary-form-group">
+            <label>备注</label>
+            <textarea id="diaryNotebookNoteInput" placeholder="添加备注..." maxlength="100" rows="2"></textarea>
+          </div>
+          <div class="diary-form-group">
+            <label>主题色</label>
+            <div class="diary-color-picker" id="diaryColorPicker">
+              <button class="diary-color-btn active" data-color="#a0a0a0" style="background: #a0a0a0;"></button>
+              <button class="diary-color-btn" data-color="#fbbf24" style="background: #fbbf24;"></button>
+              <button class="diary-color-btn" data-color="#60a5fa" style="background: #60a5fa;"></button>
+              <button class="diary-color-btn" data-color="#4ade80" style="background: #4ade80;"></button>
+              <button class="diary-color-btn" data-color="#f472b6" style="background: #f472b6;"></button>
+              <button class="diary-color-btn" data-color="#a78bfa" style="background: #a78bfa;"></button>
+              <button class="diary-color-btn" data-color="#f97316" style="background: #f97316;"></button>
+              <button class="diary-color-btn" data-color="#22d3ee" style="background: #22d3ee;"></button>
+            </div>
+          </div>
+        </div>
+        <div class="diary-modal-footer">
+          <button class="diary-btn diary-btn-secondary" id="diaryModalCancelBtn">取消</button>
+          <button class="diary-btn diary-btn-primary" id="diaryModalSaveBtn">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diary: Edit Diary Title Modal -->
+    <div class="diary-modal" id="diaryEditModal">
+      <div class="diary-modal-content">
+        <div class="diary-modal-header">
+          <h3>编辑日记标题</h3>
+          <button class="diary-modal-close" id="diaryEditModalClose">&times;</button>
+        </div>
+        <div class="diary-modal-body">
+          <div class="diary-form-group">
+            <label>日记标题</label>
+            <input type="text" id="diaryEditTitleInput" placeholder="输入日记标题..." maxlength="50">
+          </div>
+        </div>
+        <div class="diary-modal-footer">
+          <button class="diary-btn diary-btn-secondary" id="diaryEditCancelBtn">取消</button>
+          <button class="diary-btn diary-btn-primary" id="diaryEditSaveBtn">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diary: Card Detail Modal -->
+    <div class="diary-modal diary-card-modal" id="diaryCardModal">
+      <div class="diary-modal-content diary-card-content">
+        <div class="diary-modal-header">
+          <div class="diary-card-header-info">
+            <div class="diary-card-emotion-dot" id="diaryCardEmotionDot"></div>
+            <h3 id="diaryCardTitle">日记标题</h3>
+          </div>
+          <div class="diary-card-header-meta">
+            <span class="diary-card-time" id="diaryCardTime"></span>
+            <button class="diary-modal-close" id="diaryCardModalClose">&times;</button>
+          </div>
+        </div>
+        <div class="diary-modal-body">
+          <div class="diary-conversation" id="diaryConversation"></div>
+        </div>
+        <div class="diary-modal-footer">
+          <button class="diary-btn diary-btn-danger" id="diaryCardDeleteBtn">删除日记</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three.js (core only, no post-processing deps) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="/js/heart-particles.js"></script>
+  <script src="/js/music-player.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

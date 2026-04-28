@@ -140,6 +140,12 @@ MODEL_NAME=qwen3.5-omni-flash
 如需使用其他模型提供商（如 OpenAI、本地模型等），请参考 [自定义模型接入指南](.github/docs/custom-model-guide.md) 修改代码配置。
 
 ## 📸 功能展示
+1.主界面
+<img width="1102" height="702" alt="image" src="https://github.com/user-attachments/assets/439ec0bb-d704-4350-a245-75579e57253e" />
+2.图片上传
+<img width="1108" height="720" alt="image" src="https://github.com/user-attachments/assets/dd3fecf0-a5c6-4cb6-a5dd-27aecae9059e" />
+3.日记系统
+<img width="1107" height="721" alt="image" src="https://github.com/user-attachments/assets/b046705c-258d-450a-bab3-19920b14f195" />
 
 
 ## 🤝 贡献指南

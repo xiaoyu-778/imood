@@ -141,21 +141,6 @@ MODEL_NAME=qwen3.5-omni-flash
 
 ## 📸 功能展示
 
-### 主界面
-
-![Main Interface](.github/docs/images/main-interface.png)
-
-### 日记时间轴
-
-![Diary Timeline](.github/docs/images/diary-timeline.png)
-
-### 音乐播放器
-
-![Music Player](.github/docs/images/music-player.png)
-
-### 图片粒子效果
-
-![Image Particles](.github/docs/images/image-particles.png)
 
 ## 🤝 贡献指南
 

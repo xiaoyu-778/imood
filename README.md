@@ -162,21 +162,16 @@ MODEL_NAME=qwen3.5-omni-flash
 
 本项目基于 [MIT](LICENSE) 许可证开源。
 
-## 🙏 致谢
-
-- 灵感来源：电影《Her》(2013)
-- AI 服务：阿里云 DashScope
-- 3D 渲染：Three.js
 
 ## 💬 联系我们
 
 如有问题或建议，欢迎通过以下方式联系：
 
 - 提交 [Issue](https://github.com/yourusername/imood-v2/issues)
-- 发送邮件至 your.email@example.com
+- 发送邮件至 3389357760@example.com
 
 ---
 
 <p align="center">
-  Made with ❤️ by Solo
+❤️ 
 </p>

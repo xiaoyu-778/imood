@@ -53,7 +53,7 @@
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/yourusername/imood-v2.git
+git clone https://github.com/xiaoyu-778/imood.git
 cd imood-v2
 
 # 2. 安装依赖

@@ -54,7 +54,7 @@
 ```bash
 # 1. 克隆项目
 git clone https://github.com/xiaoyu-778/imood.git
-cd imood-v2
+cd imood
 
 # 2. 安装依赖
 npm install
